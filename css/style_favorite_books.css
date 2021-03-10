@@ -1,0 +1,61 @@
+#favorite-container{
+	position:relative;
+	margin: 0 auto;
+	background-color:white;
+	width:55%;
+	top:13em;
+	border-radius:40px;
+	box-shadow: 5px 5px 15px grey;
+}
+
+.space{
+	height:2em;
+}
+
+.books-block{
+	width:80%;
+	height:10.7em;
+	background-color:#1884b2;
+	border-radius:40px;
+	margin-top:3em;
+	margin-left:5em;
+	word-wrap: break-word;
+}
+
+.book-link-block{
+	width:28.5em;
+	margin-left:10em;
+	margin-top:-9.5em;
+}
+
+.number-books{
+	text-align:center;
+	font-family:Montserrat, sans-serif;
+	font-size:21px;
+	padding-top:0.5em;
+}
+
+.img-books{
+	width:125px;
+	height:150px;
+}
+
+.link-book-a{
+	color:white;
+	font-size:19px;
+}
+
+.link-book-a:hover{
+	color:white;
+	font-size:19px;
+}
+
+.delete-book-a{
+	color:darkred;
+	font-size:16px;
+}
+
+.delete-book:hover{
+	color:darkred;
+	text-decoration: none;
+}

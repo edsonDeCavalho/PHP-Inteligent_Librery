@@ -1,0 +1,122 @@
+#main-container{
+	position:relative;
+	margin: 0 auto;
+	background-color:white;
+	width:35%;
+	top:13em;
+	border-radius:40px;
+	box-shadow: 5px 5px 15px grey;
+	text-align:center;
+}
+
+#profil-form{
+	margin-top:2em;
+	text-align:left;
+	margin-left:3em;
+}
+
+.bg-header{
+	width:100%;
+	margin-top:5em
+}
+
+.header-pc{
+	display:block;
+}
+.header-responsive{
+	display:none;
+}
+
+label{
+	display:block;
+    float:top;
+    white-space: nowrap;
+}
+
+#profil-form input{
+	background-color: white;
+	width:19em;
+	height:1.6em;
+	padding-left:10px;
+	border-radius:5px;
+	margin-top:1em;
+}
+
+#profil-form label{
+	font-family: 'Montserrat', sans-serif;
+}
+
+#civility-label{
+	margin-top:2em;
+}
+
+#civility-select{
+	background-color: white;
+	width:5em;
+	height:1.8em;
+	border-radius:5px;
+	margin-top:1em;
+}
+
+#first_name-label{
+	margin-top:2em;
+}
+
+#last_name-label{
+	margin-top:2em;
+}
+
+#email-label{
+	margin-top:2em;
+}
+
+#password-label{
+	margin-top:2em;
+}
+
+#password-confirm-label{
+	margin-top:2em;
+}
+.preferences-select{
+	background-color: white;
+	width:12em;
+	height:1.8em;
+	border-radius:5px;
+	margin-top:1em;
+}
+
+
+#save-button{
+	background-color:#023f76;
+	border: none;
+	color: white;
+	padding: 7px 15px;
+	text-align: center;
+	text-decoration: none;
+	display: inline-block;
+	border-radius: 10px;
+}
+#save-button:hover{
+	background-color:white;
+	color:#023f76;
+	border:1px solid #023f76;
+	outline: none; 
+}
+
+#save-button:active{
+	vertical-align: top;
+    padding:7px 15px 6px;
+	outline: none; 
+}
+#modified-password-link{
+}
+
+#modified-password-link:hover{
+	text-decoration:underline;
+}
+
+#change-password-block{
+	margin-top:2em;
+	display:none;
+}
+

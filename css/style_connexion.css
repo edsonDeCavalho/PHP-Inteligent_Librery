@@ -1,0 +1,83 @@
+#connexion-container{
+	position:relative;
+	margin: 0 auto;
+	background-color:white;
+	height:30em;
+	width:35%;
+	top:13em;
+	border-radius:40px;
+	box-shadow: 5px 5px 15px grey;
+	text-align:center;
+}
+
+#connexion-form{
+	margin-top:2em;
+	text-align:left;
+	margin-left:3em;
+}
+
+label{
+	display:block;
+    float:top;
+    white-space: nowrap;
+}
+
+#connexion-form input{
+	background-color: white;
+	width:19em;
+	height:1.6em;
+	padding-left:10px;
+	border-radius:5px;
+	margin-top:1em;
+}
+
+#connexion-form label{
+	font-family: 'Montserrat', sans-serif;
+}
+
+#email-label{
+	margin-top:2em;
+}
+
+#password-label{
+	margin-top:2em;
+}
+
+#save-button{
+	background-color:#023f76;
+	border: none;
+	color: white;
+	padding: 7px 15px;
+	text-align: center;
+	text-decoration: none;
+	display: inline-block;
+	border-radius: 10px;
+	margin-left:11em;
+	margin-top:1em;
+}
+
+#save-button-connexion{
+	background-color:#023f76;
+	border: none;
+	color: white;
+	padding: 7px 15px;
+	text-align: center;
+	text-decoration: none;
+	display: inline-block;
+	border-radius: 10px;
+}
+#save-button-connexion:hover{
+	background-color:white;
+	color:#023f76;
+	border:1px solid #023f76;
+	outline: none; 
+}
+
+#save-button-connexion:active{
+	vertical-align: top;
+    padding:7px 15px 6px;
+	outline: none; 
+}
+.inscription-link:hover{
+	text-decoration:underline;
+}

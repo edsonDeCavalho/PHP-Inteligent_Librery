@@ -1,0 +1,41 @@
+.bg-header{
+	width:100%;
+	margin-top:5em;
+	height:340px;
+}
+ 
+.right-now{
+	width:82em;
+	margin:0 auto;
+	height:30em;
+}
+
+.books-love{
+	width:82em;
+	margin:	0 auto;
+	height:54em;
+}
+
+.because-of{
+	width:82em;
+	margin:0 auto;
+	height:30em;
+}
+
+.readers-fav{
+	width:82em;
+	margin:0 auto;
+	height:30em;
+}
+
+@media (max-width: 767px) {
+	.dropdown-menu.multi-column {
+		min-width: 240px !important;
+		overflow-x: hidden;
+	}
+}
+
+a:focus
+{
+outline:0;
+} 
