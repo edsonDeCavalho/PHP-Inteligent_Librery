@@ -1,2 +1,2 @@
-# Librerie_Inteligente
-Librairie  en  ligne  permettant  de  suggérer  automatiquement  aux  clients des  livres  intéressants. Les  suggestions  sont  réalisées en  se  basant  sur  le profil  des  clients, la tendance (actualités), les historiquesd’achats, les évaluations deslivres, etc.
+# Inteligent_Librery
+Online bookstore than automatically suggesting interesting books to customers. Suggestions are made based on customer profile, trend (news), purchase histories, book reviews, etc. 
