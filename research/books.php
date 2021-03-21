@@ -2,7 +2,10 @@
 	session_start();
 	require_once('../include/functions/mysql.conf.php');
 	include('../include/functions/functions_mysql.inc.php');
+	include('../include/functions/functions.inc.php');
 	require_once('../include/research_books_GET_POST.php');	
+	
+
 ?>
 
 <!DOCTYPE html>
@@ -32,142 +35,15 @@
 
 	<div class="main-container">
 		<div class="menu-research-container">
-			<form action="./books.php" name="form1" method="POST">
+			<form action="./books.php" method="POST">
 			<div class="rating-star-container">
-				<h2 style="font-size:22px;margin-left:0.7em">EVALUATIONS</h2>
-				<table>
-					<tr>
-						<td style="padding-left:1.5em"><input type="checkbox" onclick='ratingControl(0)' name="rating" value="5"/>
-						<td style="padding-left:1em"><label style="color:#fd4;font-size:21px" class="fas fa-star"></label></td>
-						<td style="padding-left:1em"><label style="color:#fd4;font-size:21px" class="fas fa-star"></label></td>
-						<td style="padding-left:1em"><label style="color:#fd4;font-size:21px" class="fas fa-star"></label></td>
-						<td style="padding-left:1em"><label style="color:#fd4;font-size:21px" class="fas fa-star"></label></td>
-						<td style="padding-left:1em"><label style="color:#fd4;font-size:21px" class="fas fa-star"></label></td>
-					</tr>
-					<tr>
-						<td style="padding-top:1em;padding-left:1.5em"><input type="checkbox" onclick='ratingControl(1)' name="rating" value="4"/></td>
-						<td style="padding-top:1em;padding-left:1em"><label style="color:#fd4;font-size:21px" class="fas fa-star"></label></td>
-						<td style="padding-top:1em;padding-left:1em"><label style="color:#fd4;font-size:21px" class="fas fa-star"></label></td>
-						<td style="padding-top:1em;padding-left:1em"><label style="color:#fd4;font-size:21px" class="fas fa-star"></label></td>
-						<td style="padding-top:1em;padding-left:1em"><label style="color:#fd4;font-size:21px" class="fas fa-star"></label></td>
-						<td style="padding-top:1em;padding-left:1em"><label style="color:grey;font-size:21px" class="fas fa-star"></label></td>
-					</tr>
-					<tr>
-						<td style="padding-top:1em;padding-left:1.5em"><input type="checkbox" onclick='ratingControl(2)' name="rating" value="3"/></td>
-						<td style="padding-top:1em;padding-left:1em"><label style="color:#fd4;font-size:21px" class="fas fa-star"></label></td>
-						<td style="padding-top:1em;padding-left:1em"><label style="color:#fd4;font-size:21px" class="fas fa-star"></label></td>
-						<td style="padding-top:1em;padding-left:1em"><label style="color:#fd4;font-size:21px" class="fas fa-star"></label></td>
-						<td style="padding-top:1em;padding-left:1em"><label style="color:grey;font-size:21px" class="fas fa-star"></label></td>
-						<td style="padding-top:1em;padding-left:1em"><label style="color:grey;font-size:21px" class="fas fa-star"></label></td>
-					</tr>
-					<tr>
-						<td style="padding-top:1em;padding-left:1.5em"><input type="checkbox" onclick='ratingControl(3)' name="rating" value="2"/></td>
-						<td style="padding-top:1em;padding-left:1em"><label style="color:#fd4;font-size:21px" class="fas fa-star"></label></td>
-						<td style="padding-top:1em;padding-left:1em"><label style="color:#fd4;font-size:21px" class="fas fa-star"></label></td>
-						<td style="padding-top:1em;padding-left:1em"><label style="color:grey;font-size:21px" class="fas fa-star"></label></td>
-						<td style="padding-top:1em;padding-left:1em"><label style="color:grey;font-size:21px" class="fas fa-star"></label></td>
-						<td style="padding-top:1em;padding-left:1em"><label style="color:grey;font-size:21px" class="fas fa-star"></label></td>
-					</tr>
-					<tr>
-						<td style="padding-top:1em;padding-left:1.5em"><input type="checkbox" onclick='ratingControl(4)' name="rating" value="1"/></td>
-						<td style="padding-top:1em;padding-left:1em"><label style="color:#fd4;font-size:21px" class="fas fa-star"></label></td>
-						<td style="padding-top:1em;padding-left:1em"><label style="color:grey;font-size:21px" class="fas fa-star"></label></td>
-						<td style="padding-top:1em;padding-left:1em"><label style="color:grey;font-size:21px" class="fas fa-star"></label></td>
-						<td style="padding-top:1em;padding-left:1em"><label style="color:grey;font-size:21px" class="fas fa-star"></label></td>
-						<td style="padding-top:1em;padding-left:1em"><label style="color:grey;font-size:21px" class="fas fa-star"></label></td>
-					</tr>
-				</table>
+				<?php printRatingStars();?>
 			</div>
 			<div class="date-container">
-				<h2 style="font-size:22px;margin-left:0.7em">RELEASE DATE</h2>
-				<select style="margin-left:1em;width:14em" class="form-control" name="release">
-					<option value="all">All</option>
-					<option value="t">2021-today</option>
-					<option value="2016-2020">2016-2020</option>
-					<option value="2011-2015">2011-2015</option>
-					<option value="2006-2010">2006-2010</option>
-					<option value="2001-2005">2001-2005</option>
-					<option value="1980-2000">1980-2000</option>
-					<option value="b">Before 1980</option>
-				</select>
-				<p style="height:3em"></p>
+				<?php printDate(); ?>
 			</div>
 			<div class="genres-container">
-				<h2 style="font-size:22px;margin-left:0.7em">GENRES</h2>
-				<table>
-					<tr>
-						<td style="padding-left:1.5em"><input type="checkbox" name="category[]" value="Art"/>
-						<td style="padding-left:1em"><label>Art</label></td>
-					</tr>
-					<tr>
-						<td style="padding-top:1em;padding-left:1.5em"><input type="checkbox" name="category[]" value="Biography"/></td>
-						<td style="padding-top:1em;padding-left:1em"><label>Biography</label></td>
-					</tr>
-					<tr>
-						<td style="padding-top:1em;padding-left:1.5em"><input type="checkbox" name="category[]" value="Business"/>
-						<td style="padding-top:1em;padding-left:1em"><label>Business</label></td>
-					</tr>
-					<tr>
-						<td style="padding-top:1em;padding-left:1.5em"><input type="checkbox" name="category[]" value="Computers"/>
-						<td style="padding-top:1em;padding-left:1em"><label>Computers</label></td>
-					</tr>
-					<tr>
-						<td style="padding-top:1em;padding-left:1.5em"><input type="checkbox" name="category[]" value="Cooking"/></td>
-						<td style="padding-top:1em;padding-left:1em"><label>Cooking</label></td>
-					</tr>
-					<tr>
-						<td style="padding-top:1em;padding-left:1.5em"><input type="checkbox" name="category[]" value="Fiction"/>
-						<td style="padding-top:1em;padding-left:1em"><label>Fiction</label></td>
-					</tr>
-					<tr>
-						<td style="padding-top:1em;padding-left:1.5em"><input type="checkbox" name="category[]" value="Health"/></td>
-						<td style="padding-top:1em;padding-left:1em"><label>Health</label></td>
-					</tr>
-					<tr>
-						<td style="padding-top:1em;padding-left:1.5em"><input type="checkbox" name="category[]" value="History"/></td>
-						<td style="padding-top:1em;padding-left:1em"><label>History</label></td>
-					</tr>
-					<tr>
-						<td style="padding-top:1em;padding-left:1.5em"><input type="checkbox" name="category[]" value="Humor"/>
-						<td style="padding-top:1em;padding-left:1em"><label>Humor</label></td>
-					</tr>
-					<tr>
-						<td style="padding-top:1em;padding-left:1.5em"><input type="checkbox" name="category[]" value="Mathematics"/></td>
-						<td style="padding-top:1em;padding-left:1em"><label>Mathematics</label></td>
-					</tr>
-					<tr>
-						<td style="padding-top:1em;padding-left:1.5em"><input type="checkbox" name="category[]" value="Medical"/></td>
-						<td style="padding-top:1em;padding-left:1em"><label>Medical</label></td>
-					</tr>
-					<tr>
-						<td style="padding-top:1em;padding-left:1.5em"><input type="checkbox" name="category[]" value="Music"/>
-						<td style="padding-top:1em;padding-left:1em"><label>Music</label></td>
-					</tr>
-					<tr>
-						<td style="padding-top:1em;padding-left:1.5em"><input type="checkbox" name="category[]" value="Nature"/></td>
-						<td style="padding-top:1em;padding-left:1em"><label>Nature</label></td>
-					</tr>
-					<tr>
-						<td style="padding-top:1em;padding-left:1.5em"><input type="checkbox" name="category[]" value="Philosophy"/>
-						<td style="padding-top:1em;padding-left:1em"><label>Philosophy</label></td>
-					</tr>
-					<tr>
-						<td style="padding-top:1em;padding-left:1.5em"><input type="checkbox" name="category[]" value="Poetry"/></td>
-						<td style="padding-top:1em;padding-left:1em"><label>Poetry</label></td>
-					</tr>
-					<tr>
-						<td style="padding-top:1em;padding-left:1.5em"><input type="checkbox" name="category[]" value="Psychology"/>
-						<td style="padding-top:1em;padding-left:1em"><label>Psychology</label></td>
-					</tr>
-					<tr>
-						<td style="padding-top:1em;padding-left:1.5em"><input type="checkbox" name="category[]" value="Religion"/></td>
-						<td style="padding-top:1em;padding-left:1em"><label>Religion</label></td>
-					</tr>
-					<tr>
-						<td style="padding-top:1em;padding-left:1.5em"><input type="checkbox" name="category[]" value="Science"/>
-						<td style="padding-top:1em;padding-left:1em"><label>Science</label></td>
-					</tr>
-				</table>
+				<?php printGenres(); ?>
 			</div>
 			<table style="margin:2em auto">
 				<tr>
@@ -178,10 +54,10 @@
 		</div>
 		
 		<div class="research-result-container">
-			<h2 style="font-size:22px;margin-left:0.4em;margin-top:-1px">RESULTAT DE LA RECHERCHE</h2>
+			<h2 style="font-size:22px;margin-left:0.4em;margin-top:-1px">RESULT OF THE RESEARCH</h2>
 			<?php 
 				printBooksResearch($research_books,$begin);
-				pagination($category,$current_page,$total_pages,$release_date);
+				pagination($category,$current_page,$total_pages,$release_date,$rating,$search);
 			?>
 			
 		</div>

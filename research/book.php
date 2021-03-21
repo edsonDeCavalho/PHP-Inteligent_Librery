@@ -3,11 +3,21 @@
 	require_once('../include/functions/mysql.conf.php');
 	include('../include/functions/functions_mysql.inc.php');
 	include('../include/functions/functions.inc.php');
+	
 
 	if((isset($_GET['id'])) AND ((!empty($_GET['id'])))){
 		$id_book=$_GET['id'];
 		$array_books_detail=getDetailBook($myPDO,$id_book);
 		$popular_books=getRandomBooks($myPDO,5);
+		$similar_books=getSimilarBooks($myPDO,$id_book,$array_books_detail['category']);
+		
+		if(isset($_SESSION['visualization'])){
+			$visualization_books=$_SESSION['visualization'];
+			array_push($visualization_books['id_book'],$id_book);
+			array_push($visualization_books['category_book'],$array_books_detail['category']);
+			$_SESSION['visualization']=	$visualization_books;
+			
+		}
 	}
 	else{
 		header("../index.php'");
@@ -132,91 +142,11 @@
 					?>
 				</div>
 			</div>
-		</div>	
-		
-		<div class="suggestion-category-container">
-			<h3>Popular books for the <?php echo $array_books_detail['category'];?> genre</h3>
-			<table style="margin:2.5em auto">
-				<tr>
-					<td><a href="./book.php?id=<?php echo $popular_books['id'][0];?>"><img src=<?php echo $popular_books['cover'][0];?> width="160" height="210" alt="cover-book"></a></td>
-					<td style="padding-left:3em"><a href="./book.php?id=<?php echo $popular_books['id'][1];?>"><img  src=<?php echo $popular_books['cover'][1];?> width="160" height="210" alt="cover-book"></a></td>
-					<td style="padding-left:3em"><a href="./book.php?id=<?php echo $popular_books['id'][2];?>"><img  src=<?php echo $popular_books['cover'][2];?> width="160" height="210" alt="cover-book"></a></td>
-					<td style="padding-left:3em"><a href="./book.php?id=<?php echo $popular_books['id'][3];?>"><img src=<?php echo $popular_books['cover'][3];?> width="160" height="210" alt="cover-book"></a></td>
-					<td style="padding-left:3em"><a href="./book.php?id=<?php echo $popular_books['id'][4];?>"><img src=<?php echo $popular_books['cover'][4];?> width="160" height="210" alt="cover-book"></a></td>
-				</tr>
-				<tr>
-					<td style="padding-top:1em">
-						<div style='word-wrap: break-word;width:13em'>
-							<p><?php echo $popular_books['title'][0];?></p>
-						</div>
-					</td>
-					<td style="padding-top:1em;padding-left:3em">
-						<div style='word-wrap: break-word;width:13em'>
-							<p><?php echo $popular_books['title'][1];?></p>
-						</div>
-					</td>
-					<td style="padding-top:1em;padding-left:3em">
-						<div style='word-wrap: break-word;width:13em'>
-							<p><?php echo $popular_books['title'][2];?></p>
-						</div>
-					</td>
-					<td style="padding-top:1em;padding-left:3em">
-						<div style='word-wrap: break-word;width:13em'>
-							<p><?php echo $popular_books['title'][3];?></p>
-						</div>
-					</td>
-					<td style="padding-top:1em;padding-left:3em">
-						<div style='word-wrap: break-word;width:13em'>
-							<p><?php echo $popular_books['title'][4];?></p>
-						</div>
-					</td>
-				</tr>
-			</table>
-		</div>
-		
-		<div class="suggestion-author-container">
-			<h3>Books by the same author</h3>
-			<table style="margin:2.5em auto">
-				<tr>
-					<td><a href="./book.php?id=<?php echo $popular_books['id'][0];?>"><img src=<?php echo $popular_books['cover'][0];?> width="160" height="210" alt="cover-book"></a></td>
-					<td style="padding-left:3em"><a href="./book.php?id=<?php echo $popular_books['id'][1];?>"><img  src=<?php echo $popular_books['cover'][1];?> width="160" height="210" alt="cover-book"></a></td>
-					<td style="padding-left:3em"><a href="./book.php?id=<?php echo $popular_books['id'][2];?>"><img  src=<?php echo $popular_books['cover'][2];?> width="160" height="210" alt="cover-book"></a></td>
-					<td style="padding-left:3em"><a href="./book.php?id=<?php echo $popular_books['id'][3];?>"><img src=<?php echo $popular_books['cover'][3];?> width="160" height="210" alt="cover-book"></a></td>
-					<td style="padding-left:3em"><a href="./book.php?id=<?php echo $popular_books['id'][4];?>"><img src=<?php echo $popular_books['cover'][4];?> width="160" height="210" alt="cover-book"></a></td>
-				</tr>
-				<tr>
-					<td style="padding-top:1em">
-						<div style='word-wrap: break-word;width:13em'>
-							<p><?php echo $popular_books['title'][0];?></p>
-						</div>
-					</td>
-					<td style="padding-top:1em;padding-left:3em">
-						<div style='word-wrap: break-word;width:13em'>
-							<p><?php echo $popular_books['title'][1];?></p>
-						</div>
-					</td>
-					<td style="padding-top:1em;padding-left:3em">
-						<div style='word-wrap: break-word;width:13em'>
-							<p><?php echo $popular_books['title'][2];?></p>
-						</div>
-					</td>
-					<td style="padding-top:1em;padding-left:3em">
-						<div style='word-wrap: break-word;width:13em'>
-							<p><?php echo $popular_books['title'][3];?></p>
-						</div>
-					</td>
-					<td style="padding-top:1em;padding-left:3em">
-						<div style='word-wrap: break-word;width:13em'>
-							<p><?php echo $popular_books['title'][4];?></p>
-						</div>
-					</td>
-				</tr>
-			</table>
-		</div>
-		
+		</div>		
+		<?php printSimilarBooks($similar_books,$array_books_detail['category'],$popular_books); ?>	
 	</div>
 	
-	<p style="height:17em"></p>
+	<p style="height:200px"></p>
 </div>
 	
 	<?php 

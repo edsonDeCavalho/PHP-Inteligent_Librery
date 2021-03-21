@@ -1,4 +1,31 @@
 <?php
+	function getTitleBookById($myPDO,$id_book){
+		$query="SELECT title FROM book WHERE id_book='".$id_book."'";
+		$result=$myPDO->query($query);
+		
+		while($data=$result->fetch()){
+			$title=$data['title'];
+		}
+		$myPDO=null;
+		return $title;
+	}
+?>
+
+<?php
+	function getCoverBookById($myPDO,$id_book){
+		$query="SELECT cover FROM book WHERE id_book='".$id_book."'";
+		$result=$myPDO->query($query);
+		
+		while($data=$result->fetch()){
+			$cover=$data['cover'];
+		}
+		$myPDO=null;
+		return $cover;
+	}
+?>
+
+<!--Récuperer un nombre aléatoire de livre random-->
+<?php
 	function getRandomBooks($myPDO,$number=4){
 		$array_books=array('id'=>array(),'cover'=>array(),'title'=>array());
 		$i=0;
@@ -17,61 +44,105 @@
 	}
 ?>
 
+<!--Recuperer les livres de la recherchefiltrée (i.e avec les filtrages)-->
 <?php
-	function getBooksFromResearch($myPDO,$category,$number_category,$release_date){
-		if($category!="none"){
-			$array_books=array('id'=>array(),'cover'=>array(),'title'=>array());
-			$i=0;
+	function getBooksFromResearchFilter($myPDO,$category,$number_categories,$release_date,$rating,$number_ratings){
+		$array_books=array('id'=>array(),'cover'=>array(),'title'=>array());
 		
-			if($number_category>0){
-				$query="SELECT book.id_book,title,cover FROM book WHERE category='".$category[$i]."'";
-
-				for($i=1;$i<$number_category;$i++){
+		if($category!="none"){
+			$i=0;	
+			if($number_categories>1){
+				if($rating!="none"){
+					$query="SELECT book.id_book,title,cover,AVG(assess.mark) FROM book
+							INNER JOIN assess ON book.id_book=assess.id_book
+							WHERE category='".$category[0]."'";					
+				}
+				else{
+					$query="SELECT book.id_book,title,cover FROM book WHERE category='".$category[0]."'";
+				}
+				for($i=1;$i<$number_categories-1;$i++){
 					$query.=" OR category='".$category[$i]."' ";
 				}
-				
+			}
+			else{
+				if($rating!="none"){
+					$query="SELECT book.id_book,title,cover,AVG(assess.mark) FROM book
+							INNER JOIN assess ON book.id_book=assess.id_book
+							WHERE category='".$category."'";					
+				}
+				else{
+					$query="SELECT book.id_book,title,cover FROM book WHERE category='".$category."'";
+				}
+			}
+			if($release_date!="none"){
 				switch($release_date){
 					case "t":
 						$release_date=date('Y');
-						$query.=" AND (LEFT(date_publication, 4) IN ('".$release_date."')) ORDER BY(category)";	
+						$query.=" AND (LEFT(date_publication, 4) IN ('".$release_date."'))";	
 						break;
 					case "b":
-						$query.=" AND (LEFT(date_publication, 4)<1980) ORDER BY(category)";	
+						$query.=" AND (LEFT(date_publication, 4)<1980)";	
 						break;
 					case "all":
 						break;
 					default:
 						$release_date=explode('-',$release_date);
-						$query.=" AND (LEFT(date_publication, 4) BETWEEN ".$release_date[0]." AND ".$release_date[1].") ORDER BY(category)";	
+						$query.=" AND (LEFT(date_publication, 4) BETWEEN ".$release_date[0]." AND ".$release_date[1].")";	
+				}
+			}
+			if($rating!="none"){
+				if($number_ratings>1){
+					$value_incr=$rating[0]+1;
+					$rating_tmp=array();
+					$query.=" GROUP BY (book.id_book) HAVING (AVG(assess.mark) BETWEEN ".$rating[0]." AND ".$value_incr.")";
+				
+					for($i=1;$i<$number_ratings-1;$i++){
+						$rating_tmp[$i-1]=$rating[$i];
+					}
+				
+					foreach($rating_tmp as $value){
+						$value_incr=$value+1;
+						$query.=" OR (AVG(assess.mark) BETWEEN ".$value." AND ".$value_incr.")";
+					}
+					$query.=" ORDER BY(category)";
+				}
+				else{
+					$value_incr=$rating+1;
+					$query.=" GROUP BY (book.id_book) HAVING (AVG(assess.mark) BETWEEN ".$rating." AND ".$value_incr.") ORDER BY(category)";
 				}
 			}
 			else{
-				if($release_date!="none"){
-					switch($release_date){
-						case "t":
-							$release_date=date('Y');
-							$query="SELECT book.id_book,title,cover FROM book WHERE category='".$category."' 
-								AND (LEFT(date_publication, 4) IN ('".$release_date."'))";	
-							break;
-						case "b":
-							$query="SELECT book.id_book,title,cover FROM book WHERE category='".$category."' 
-								AND (LEFT(date_publication, 4)<1980)";	
-							break;
-						case "all":
-							break;
-						default:
-							$release_date=explode('-',$release_date);
-							$query="SELECT book.id_book,title,cover FROM book WHERE category='".$category."' 
-								AND (LEFT(date_publication, 4) BETWEEN ".$release_date[0]." AND ".$release_date[1].")";	
-					}
-				}
-				else{
-					$query="SELECT book.id_book,title,cover FROM book WHERE category='".$category."'";	
-				}
+				$query.=" ORDER BY(category)";
 			}
 		}
 		else{
-			switch($release_date){
+			if($release_date=="none"){
+				if($number_ratings>1){
+					$value_incr=$rating[0]+1;
+					$rating_tmp=array();
+					$query="SELECT book.id_book,title,cover,AVG(assess.mark) FROM book
+							INNER JOIN assess ON book.id_book=assess.id_book
+							GROUP BY (book.id_book) HAVING (AVG(assess.mark) BETWEEN ".$rating[0]." AND ".$value_incr.")";
+						
+					for($i=1;$i<$number_ratings-1;$i++){
+						$rating_tmp[$i-1]=$rating[$i];
+					}
+				
+					foreach($rating_tmp as $value){
+						$value_incr=$value+1;
+						$query.=" OR (AVG(assess.mark) BETWEEN ".$value." AND ".$value_incr.")";
+					}	
+					$query.=" ORDER BY(category)";
+				}
+				else{
+					$value_incr=$rating+1;
+					$query="SELECT book.id_book,title,cover,AVG(assess.mark) FROM book
+							INNER JOIN assess ON book.id_book=assess.id_book
+							GROUP BY (book.id_book) HAVING (AVG(assess.mark) BETWEEN ".$rating." AND ".$value_incr.") ORDER BY(category)";
+				}
+			}
+			else if($rating=="none"){
+				switch($release_date){
 					case "t":
 						$release_date=date('Y');
 						$query="SELECT book.id_book,title,cover FROM book WHERE (LEFT(date_publication, 4) IN ('".$release_date."'))";
@@ -80,17 +151,57 @@
 						$query="SELECT book.id_book,title,cover FROM book WHERE (LEFT(date_publication, 4)<1980)";
 						break;
 					case "all":
+						$query="SELECT id_book,cover,title FROM book ORDER BY RAND() LIMIT 200";
 						break;
 					default:
 						$release_date=explode('-',$release_date);
 						$query="SELECT book.id_book,title,cover FROM book WHERE (LEFT(date_publication, 4) 
 							BETWEEN ".$release_date[0]." AND ".$release_date[1].")";
 				}
+			}
+			else{
+				$query="SELECT book.id_book,title,cover,AVG(assess.mark) FROM book
+						INNER JOIN assess ON book.id_book=assess.id_book";
+						
+				switch($release_date){
+					case "t":
+						$release_date=date('Y');
+						$query.=" AND (LEFT(date_publication, 4) IN ('".$release_date."'))";
+						break;
+					case "b":
+						$query.=" AND (LEFT(date_publication, 4)<1980)";
+						break;
+					case "all":
+						break;
+					default:
+						$release_date=explode('-',$release_date);
+						$query.=" AND (LEFT(date_publication, 4) BETWEEN ".$release_date[0]." AND ".$release_date[1].")";
+				}
+				if($number_ratings>1){
+					$rating_tmp=array();
+					$value_incr=$rating[0]+1;
+					$query.=" GROUP BY (book.id_book) HAVING (AVG(assess.mark) BETWEEN ".$rating[0]." AND ".$value_incr.")";
+
+					for($i=1;$i<$number_ratings-1;$i++){
+						$rating_tmp[$i-1]=$rating[$i];
+					}
+							
+					foreach($rating_tmp as $value){
+						$value_incr=$value+1;
+						$query.=" OR (AVG(assess.mark) BETWEEN ".$value." AND ".$value_incr.")";
+					}
+				}
+				else{
+					$value_incr=$rating+1;
+					$query.=" GROUP BY (book.id_book) HAVING (AVG(assess.mark) BETWEEN ".$rating." AND ".$value_incr.")";
+				}
+				$query.=" ORDER BY(category)";
+			}
 		}
 		
 		$i=0;
 		$result=$myPDO->query($query);
-		
+				
 		while($data=$result->fetch()){
 			$array_books['id'][$i]=$data['id_book'];
 			$array_books['cover'][$i]=$data['cover'];
@@ -103,166 +214,7 @@
 	}
 ?>
 
-<?php
-	function getTotalPages($array_books){
-		$total_books=count($array_books['id']);
-		
-		if($total_books<=0){
-			$pages=0;
-		}
-		else{
-			$pages=($total_books/16);
-			$pages=round($pages, 0, PHP_ROUND_HALF_DOWN);
-		}
-		return $pages;
-	}
-?>
-
-<?php
-	function printBooksResearch($array_books,$begin){
-		$htmlString="<table style='margin:0 auto;margin-top:2em;margin-left:0.7em'>";
-		$htmlString.="<tr>";
-		
-		$total_books=count($array_books['id']);
-		$k=$begin;
-		$kk=$begin;
-		$books_by_page=16;
-		
-		for($i=0;$i<$books_by_page+1;$i++){	
-			if($k<$total_books){		
-				if(($i%4==0) && ($i>0)){
-					$htmlString.="</tr><tr>";
-					$j=$i-4;
-					for($j;$j<$i;$j++){
-						$title=$array_books['title'][$kk];
-						$htmlString.="<td style='padding-right:4em'>
-										<div style='word-wrap: break-word;width:13em'>
-											<p style='margin-top:0.5em'>".$title."</p>
-										</div>
-									</td>";
-						$kk++;
-					}
-					$htmlString.="</tr><tr>";	
-				}
-				if($i<$books_by_page){
-					$id_book=$array_books['id'][$k];
-					$cover=$array_books['cover'][$k];
-					
-					$htmlString.="<td style='padding-top:2em'>
-									<a href='./book.php?id=".$id_book."'><img src='".$cover."' width='170' height='220' alt='Image-book'></a>
-								</td>";
-					$k++;	
-				}
-			}
-			else{
-				break;
-			}
-		}		
-		if($kk!=$k){
-			$htmlString.="<tr>";
-			for($j=$kk;$j<$k;$j++){
-				$title=$array_books['title'][$j];
-				$htmlString.="<td style='padding-right:4em'>
-								<div style='word-wrap: break-word;width:13em'>
-									<p style='margin-top:0.5em'>".$title;"</p>
-								</div>
-							</td>";
-			}
-			$htmlString.="</tr>";
-			$kk=0;
-		}
-		else{
-			$htmlString.="</tr>";
-		}
-		$htmlString.="</table>";
-	
-		echo $htmlString;
-	}
-?>
-
-<?php
-	function pagination($category,$current_page,$total_pages,$release_date){
-		if(is_array($category)){
-			$string_category=$category[0];
-			for($i=1;$i<count($category);$i++){
-				$string_category.=":".$category[$i];
-			}
-			$category=$string_category;
-			
-		}
-			
-		$html_string="<nav style='text-align:center'><ul style ='justify-content:center' class='pagination'>";
-		if ($current_page>1){
-			$previous_page=$current_page-1;
-			$html_string.="<li class='page-item'>
-							<a class='page-link' href='./books.php?category=$category&amp;release=$release_date&amp;page=$previous_page' aria-label='Previous'>
-								<span aria-hidden='true'>&laquo;</span>
-								<span class='sr-only'>Previous</span>
-							</a>
-						</li>";						
-		}
-		
-		for($i=1;$i<=$total_pages;$i++){
-			if($current_page==$i){
-				$html_string.="<li class='page-item'><a class='page-link' href='#'>".$i."</a></li>";
-			}
-			else{
-				$html_string.="<li class='page-item'><a class='page-link' href='./books?category=$category&amp;release=$release_date&amp;page=$i'>".$i."</a></li>";
-			}
-		}
-		if ($current_page<$total_pages){
-			$next_page=$current_page+1;	
-			$html_string.="<li class='page-item'>
-								<a class='page-link' href='./books.php?category=$category&amp;release=$release_date&amp;page=$next_page' aria-label='Next'>
-									<span aria-hidden='true'>&raquo;</span>
-									<span class='sr-only'>Next</span>
-								</a>
-							</li>";
-		}
-
-		$html_string.="</ul>";
-		$html_string.="</nav>";
-		echo $html_string;
-	}
-?>
-
-<?php
-	function pagination_favorite($current_page,$total_pages){
-		$html_string="<nav style='text-align:center'><ul style ='justify-content:center' class='pagination'>";
-		if ($current_page>1){
-			$previous_page=$current_page-1;
-			$html_string.="<li class='page-item'>
-							<a class='page-link' href='./favoriteBooks.php?page=$previous_page' aria-label='Previous'>
-								<span aria-hidden='true'>&laquo;</span>
-								<span class='sr-only'>Previous</span>
-							</a>
-						</li>";						
-		}
-		
-		for($i=1;$i<=$total_pages;$i++){
-			if($current_page==$i){
-				$html_string.="<li class='page-item'><a class='page-link' href='#'>".$i."</a></li>";
-			}
-			else{
-				$html_string.="<li class='page-item'><a class='page-link' href='./favoriteBooks.php?page=$i'>".$i."</a></li>";
-			}
-		}
-		if ($current_page<$total_pages){
-			$next_page=$current_page+1;	
-			$html_string.="<li class='page-item'>
-								<a class='page-link' href='./favoriteBooks.php?page=$next_page' aria-label='Next'>
-									<span aria-hidden='true'>&raquo;</span>
-									<span class='sr-only'>Next</span>
-								</a>
-							</li>";
-		}
-
-		$html_string.="</ul>";
-		$html_string.="</nav>";
-		echo $html_string;
-	}
-?>
-
+<!-- Récuperer les détails d'un livre -->
 <?php 
 	function getDetailBook($myPDO,$id_book){
 		$array_detail=array('title','synopsis','cover','date_publication','link_read_online','name_author'=>array(),'category');
@@ -301,6 +253,7 @@
 	}
 ?>
 
+<!--Enregistrer l'inscription d'un utilisateur dans la base de donnée (création d'un compte client-->
 <?php
 	function registerDataInscription($pseudo,$civility,$email,$password,$password_confirm,$last_name,$first_name,$pref_category,$myPDO){
 		if($civility!="0"){
@@ -374,6 +327,7 @@
 							$_SESSION['pseudo']=$pseudo;
 							$_SESSION['email']=$email;
 							$_SESSION['password']=$password;
+							$_SESSION['visualization']=array('id_book'=>array(),'category_book'=>array());
 						
 							header('location:./profil.php');
 						}
@@ -409,6 +363,7 @@
 	}
 ?>
 
+<!--Afficher les détails d'un compte utilisateur -->
 <?php
 	function dataProfil($myPDO,$email,$password){
 		$data_array=array();
@@ -432,6 +387,7 @@
 	}
 ?> 
 
+<!--Enregister les modifications d'un compte utilisateur (exemple: l'utilisateur veut changer son pseudo, mot de passe etc.. -->
 <?php
 	function registerDataModification($civility,$pseudo,$email,$password,$password_confirm,$last_name,$first_name,$pref_category,$myPDO){		
 		if((strlen($pseudo)!=0) AND (strlen($email)!=0)){
@@ -476,6 +432,7 @@
 	}
 ?>
 
+<!--Connexion au compte d'un utilisateur-->
 <?php
 	function connexionToProfil($myPDO,$locationHeaderIf,$locationHeaderElse,$email,$password){
 		$query="SELECT COUNT(id_client) AS is_client_exist FROM client_account WHERE email='".$email."' AND password='".$password."'";
@@ -499,6 +456,7 @@
 			else if($data['is_client_exist']==1){
 				$_SESSION['email']=$email;
 				$_SESSION['password']=$password;
+				$_SESSION['visualization']=array('id_book'=>array(),'category_book'=>array());
 				$myPDO=null;
 				header($locationHeaderIf);
 				return;	
@@ -506,6 +464,8 @@
 		}	
 	}
 ?>
+
+<!--Enregister le livre en favoris pour le compte de l'utisateur-->
 
 <?php
 	function registerBook($myPDO,$id_book,$email,$password){
@@ -533,6 +493,7 @@
 	}
 ?>
 
+<!-- Enregistrer la note de l'utilisateur pour un livre donné-->
 <?php
 	function registerRatingUser($myPDO,$id_book,$rating,$email,$password){
 		$bool=0;
@@ -560,6 +521,7 @@
 	}
 ?>
 
+<!--Afficher la moyenne des notes d'un livre -->
 <?php
 	function printRating($myPDO,$id_book){
 		$query ="SELECT AVG(mark) AS score,COUNT(mark) AS nbr_reviews FROM assess WHERE id_book='$id_book'";
@@ -574,23 +536,22 @@
 				$score= sprintf("%.1f",$score);
 				$score_tab=explode(".",$score);
 				$score_before_comma=$score_tab[0];
+				$tmp=0;
 				$score_after_comma=$score_tab[1];
 			
 				echo "<p style='text-align:center;color:#FFE4BA'>";
 					while($score_before_comma>0){
 						echo "<label style='font-size:26px;color:#fd4' class='fas fa-star'></label>";
 						$score_before_comma--;
+						$tmp++;
 					}
 					if($score_after_comma>=5){
 						echo "<label style='font-size:26px;color:#fd4' for='rate-5' class='fas fa-star-half'></label>";
+						$tmp++;
 					}
-					$rest =5-$score;
-					$rest= sprintf("%.1f",$rest);
-					$rest=explode(".",$rest);
-					$score_before_comma=$rest[0];
-					while($score_before_comma>0){
+					while($tmp<5){
 						echo "<label style='font-size:20px;color:grey' class='fas fa-star'></label>";
-						$score_before_comma--;
+						$tmp++;
 					}
 				echo "</p>";
 			echo "</td>";
@@ -606,6 +567,7 @@
 	}
 ?>
 
+<!--Afficher le nombre de notes d'un livre
 <?php
 	function getNumberBooksRecording($myPDO,$email,$password){
 		$id_client=getIDclient($myPDO,$email,$password);
@@ -619,6 +581,7 @@
 	}
 ?>
 
+<!--Recuperer le nombre de livres mis en favoris de l'utilisateur-->
 <?php
 	function getNbrRegister($myPDO,$email,$password){
 		$id_client=getIDclient($myPDO,$email,$password);
@@ -631,6 +594,7 @@
 	}
 ?>
 
+<!-- Recuperer l'id de l'utilisateur-->
 <?php
 	function getIDclient($myPDO,$email,$password){	
 		$select="SELECT id_client FROM client_account WHERE email='$email' AND password='$password'";
@@ -642,6 +606,7 @@
 	}
 ?>
 
+<!--Afficher les livres d'une page (books.php)-->
 <?php
 	function printBooks($myPDO,$email,$password,$pages,$current_page,$per_pages,$first){
 		$id_client=getIDclient($myPDO,$email,$password);
@@ -664,6 +629,7 @@
 	}
 ?>
 
+<!--Supprimer un livre mis en favoris par un utilisateur-->
 <?php 
 	function deleteBook($myPDO,$email,$password,$id_book){
 		$id_client=getIdClient($myPDO,$email,$password);
@@ -671,5 +637,64 @@
 		$query=$myPDO->prepare($delete);
 		$query->execute();
 		header('location:./favoriteBooks.php');
+	}
+?>
+
+<!-- Recuperer les livres similaires d'un livre visualisé (book.php) -->
+<?php
+	function getSimilarBooks($myPDO,$id_book,$category){
+		$similar_book_tmp=array('id'=>array(),'title'=>array(),'cover'=>array(),'cpt_similarity'=>array());
+		$similar_book=array('id'=>array(),'title'=>array(),'cover'=>array());
+		$i=0;
+		
+		$query="SELECT book.id_book,book.title,book.cover,COUNT(book.id_book) AS cpt_similarity FROM book 
+				INNER JOIN contain ON contain.id_book=book.id_book 
+				INNER JOIN keyword ON keyword.id_keyword=contain.id_keyword AND keyword.id_keyword IN( 
+					SELECT keyword.id_keyword FROM keyword 
+					INNER JOIN contain ON contain.id_keyword=keyword.id_keyword 
+					INNER JOIN book ON contain.id_book=book.id_book 
+					WHERE book.id_book='".$id_book."'
+				) 
+				WHERE book.category='".$category."' AND book.id_book <> '".$id_book."'
+				GROUP BY(book.id_book) ORDER BY cpt_similarity DESC";
+		
+		$query=$myPDO->query($query);
+		
+		while($data=$query->fetch()){
+			$similar_book_tmp['id'][$i]=$data['id_book'];
+			$similar_book_tmp['cpt_similarity'][$i]=$data['cpt_similarity'];
+			$similar_book_tmp['title'][$i]=$data['title'];
+			$similar_book_tmp['cover'][$i]=$data['cover'];
+			$i++;
+		}
+		$myPDO=null;
+		return $similar_book_tmp;
+	}
+?>
+
+<?php
+	function getBooksInputSearch($myPDO,$search){
+		$research_books=array('id'=>array(),'cover'=>array(),'title'=>array());
+		$search=explode(' ',$search);
+		$j=0;
+
+		if(count($search)<1){
+			return $research_books;
+		}
+		$query="SELECT id_book,cover,title FROM book WHERE title LIKE '%".$search[0]."%'";
+		
+		for($i=1;$i<count($search);$i++){
+			$query.=" AND title LIKE '%".$search[$i]."%'";
+		}
+		$query=$myPDO->query($query);
+		
+		while($data=$query->fetch()){
+			$research_books['id'][$j]=$data['id_book'];
+			$research_books['title'][$j]=$data['title'];
+			$research_books['cover'][$j]=$data['cover'];
+			$j++;
+		}
+		$myPDO=null;
+		return $research_books;
 	}
 ?>

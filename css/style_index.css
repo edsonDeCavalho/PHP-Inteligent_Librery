@@ -5,27 +5,23 @@
 }
  
 .right-now{
-	width:82em;
+	width:85%;
 	margin:0 auto;
-	height:30em;
 }
 
 .books-love{
-	width:82em;
+	width:85%;
 	margin:	0 auto;
-	height:54em;
 }
 
 .because-of{
-	width:82em;
+	width:85%;
 	margin:0 auto;
-	height:30em;
 }
 
 .readers-fav{
-	width:82em;
+	width:85%;
 	margin:0 auto;
-	height:30em;
 }
 
 @media (max-width: 767px) {

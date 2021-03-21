@@ -9,7 +9,7 @@
 	<div class="catalogue-and-research-block">
 		<nav>
 			<ul class="nav-links" style="margin-top:3em">
-				<li class="dropdown">
+				<li class="dropdown" style="top:-10px">
 					<a href="#" style="font-size:20px;text-decoration:none;margin-left:2em" class="dropdown-toggle" data-toggle="dropdown">CATALOGUE</a>
 					<ul style="margin-top:1em" class="dropdown-menu multi-column columns-3">
 						<div class="row">
@@ -46,11 +46,10 @@
 						</div>
 					</ul>
 				</li>
-				<!--
 				<li>
 					<div class="input-group">
 						<form action="./research/books.php" method="POST">
-							<input type="text" name="research" class="form-control" placeholder="Je recherche un livre...">
+							<input type="text" name="search" class="form-control" placeholder="I'm looking for a book...">
 							<div class="input-group-append">
 								<button class="btn btn-secondary" type="submit">
 									<i class="fa fa-search"></i>
@@ -59,8 +58,7 @@
 						</form>
 					</div>
 				</li>
-				-->
-				
+
 				<li style="float:right">
 					<table style="margin-right:2em;margin-top:6px">
 						<tr>
@@ -79,7 +77,7 @@
 				
 				<?php
 					if(((isset($_SESSION['email'])) AND (!empty($_SESSION['email'])))){
-						echo "<li style='float:right;margin-right:4em'><div class='dropdown show'>
+						echo "<li style='float:right'><div class='dropdown show'>
 								<a class='btn btn-secondary dropdown-toggle' style='background-color:#023f76;font-size:16px' href='#' role='button' id='dropdownMenuLink' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
 									My account
 								</a>

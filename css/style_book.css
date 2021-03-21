@@ -31,15 +31,8 @@
 }
 
 .suggestion-category-container{
-	width:90%;
+	width:95%;
 	margin:0 auto;
-	height:28em;
-}
-
-.suggestion-author-container{
-	width:90%;
-	margin:0 auto;
-	margin-top:-1em;
 }
 
 .button-opinion{

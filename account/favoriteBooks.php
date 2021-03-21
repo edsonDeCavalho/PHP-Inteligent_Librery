@@ -2,6 +2,7 @@
 	session_start();
 	require_once('../include/functions/mysql.conf.php');
 	include('../include/functions/functions_mysql.inc.php');
+	include('../include/functions/functions.inc.php');
 
 	if(((isset($_SESSION['email'])) AND (!empty($_SESSION['email']))) AND ((isset($_SESSION['password'])) AND (!empty($_SESSION['password'])))){
 		$email=$_SESSION['email'];
